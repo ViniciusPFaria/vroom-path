@@ -1,9 +1,9 @@
 # Vroom Path
 
-A sliding-block puzzle for little truck fans. Slide the red crates up and down, and the orange planks and pink pipes left and right, until the yellow forklift can drive out the gap in the fence.
+Um quebra-cabeça de blocos deslizantes para fãs de caminhão. Deslize os blocos vermelhos para cima e para baixo, e os blocos laranja para a esquerda e para a direita, até o Tito sair pela abertura da cerca.
 
-Every picture, sound, and music note is drawn or played from code when the game loads. There are no image or audio files.
+O Tito é um sprite PNG. O restante das imagens, sons e notas musicais é desenhado ou tocado pelo código quando o jogo carrega.
 
-Open `index.html` in a browser (a local static server is fine), then tap or drag.
+Abra `index.html` no navegador (um servidor estático local serve), depois toque ou arraste.
 
 GitHub Pages: https://viniciuspfaria.github.io/vroom-path/

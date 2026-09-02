@@ -28,6 +28,7 @@ jobs:
           mkdir -p site
           cp index.html .nojekyll site/
           cp -r js site/js
+          cp -r assets site/assets
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

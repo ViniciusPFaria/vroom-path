@@ -11,6 +11,10 @@ class MainScene extends Phaser.Scene {
     super("main");
   }
 
+  preload() {
+    this.load.image("truck", "assets/tito.png");
+  }
+
   create() {
     Draw.register(this, CELL);
     Draw.world(this, GAME_W, GAME_H, { x: BOARD_X, y: BOARD_Y, w: BOARD_W, h: BOARD_H });
@@ -58,12 +62,12 @@ class MainScene extends Phaser.Scene {
 
     this.winLayer = this.add.container(GAME_W / 2, GAME_H / 2).setDepth(20).setVisible(false);
     const winBg = this.add.rectangle(0, 0, 460, 280, 0xfff8e1, 0.94).setStrokeStyle(8, 0xffd54f);
-    this.winTitle = this.add.text(0, -70, "YAY!", {
+    this.winTitle = this.add.text(0, -70, "Eba!", {
       fontFamily: "Arial Black, Arial, sans-serif",
       fontSize: "72px",
       color: "#ef6c00",
     }).setOrigin(0.5);
-    this.winSub = this.add.text(0, 10, "The truck is free!", {
+    this.winSub = this.add.text(0, 10, "O Tito está livre!", {
       fontFamily: "Arial, sans-serif",
       fontSize: "26px",
       color: "#5d4037",
@@ -133,7 +137,7 @@ class MainScene extends Phaser.Scene {
 
     g.fillStyle(0x81d4fa, 1);
     g.fillTriangle(right + 28, BOARD_Y + EXIT_ROW * CELL + CELL / 2, right + 4, BOARD_Y + EXIT_ROW * CELL + 18, right + 4, BOARD_Y + EXIT_ROW * CELL + CELL - 18);
-    this.add.text(right + 36, BOARD_Y + EXIT_ROW * CELL + CELL / 2, "GO", {
+    this.add.text(right + 36, BOARD_Y + EXIT_ROW * CELL + CELL / 2, "VAI", {
       fontFamily: "Arial Black, Arial, sans-serif",
       fontSize: "18px",
       color: "#0d47a1",
@@ -153,12 +157,9 @@ class MainScene extends Phaser.Scene {
       return "truck";
     }
     if (piece.axis === "v") {
-      return "crate2";
+      return "block-v2";
     }
-    if (piece.kind === "pipe") {
-      return piece.w >= 3 ? "pipe3" : "pipe2";
-    }
-    return piece.w >= 3 ? "plank3" : "plank2";
+    return piece.w >= 3 ? "block-h3" : "block-h2";
   }
 
   loadLevel(index) {
@@ -174,7 +175,7 @@ class MainScene extends Phaser.Scene {
     this.winLayer.setVisible(false);
     this.locked = false;
     this.levelIndex = index;
-    this.levelText.setText("Puzzle " + (index + 1));
+    this.levelText.setText("Fase " + (index + 1));
 
     const data = LEVELS[index];
     this.pieces = [];
@@ -198,13 +199,15 @@ class MainScene extends Phaser.Scene {
         w: raw.w,
         h: raw.h,
         axis: raw.w > raw.h ? "h" : "v",
-        kind: raw.kind || (raw.w >= 3 ? "pipe" : raw.h > 1 ? "crate" : "plank"),
         isTruck: false,
       });
     });
 
     this.pieces.forEach((p) => {
       const sprite = this.add.image(this.cellToX(p.col, p.w), this.cellToY(p.row, p.h), this.textureFor(p));
+      if (p.isTruck) {
+        sprite.setDisplaySize(CELL * 2 - 8, CELL + 8);
+      }
       sprite.setData("piece", p);
       sprite.setInteractive({ useHandCursor: true, pixelPerfect: false });
       this.input.setDraggable(sprite);
@@ -420,8 +423,8 @@ class MainScene extends Phaser.Scene {
         onComplete: () => star.destroy(),
       });
     }
-    this.winTitle.setText(this.levelIndex === LEVELS.length - 1 ? "ALL DONE!" : "YAY!");
-    this.winSub.setText(this.levelIndex === LEVELS.length - 1 ? "More puzzles next time!" : "The truck is free!");
+    this.winTitle.setText(this.levelIndex === LEVELS.length - 1 ? "Mandou bem!" : "Eba!");
+    this.winSub.setText(this.levelIndex === LEVELS.length - 1 ? "Mais fases da próxima vez!" : "O Tito está livre!");
     this.winLayer.setVisible(true);
     this.winLayer.setScale(0.7);
     this.tweens.add({ targets: this.winLayer, scale: 1, duration: 280, ease: "Back.out" });

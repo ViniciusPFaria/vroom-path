@@ -24,166 +24,77 @@ const Draw = (() => {
     scene.textures.addCanvas(key, c);
   }
 
-  function truck(cell) {
-    const w = cell * 2;
-    const h = cell;
-    const { c, ctx } = canvas(w, h);
-    ctx.clearRect(0, 0, w, h);
+  function doubleArrow(ctx, cx, cy, vertical, length) {
+    const half = length / 2;
+    const head = Math.min(18, half * 0.38);
+    const spread = head * 0.82;
 
-    ctx.fillStyle = "rgba(40, 50, 20, 0.22)";
-    roundRect(ctx, 8, 14, w - 10, h - 18, 18);
-    ctx.fill();
-
-    const wheels = [
-      [28, 18],
-      [28, h - 18],
-      [w - 70, 18],
-      [w - 70, h - 18],
-    ];
-    wheels.forEach(([x, y]) => {
-      ctx.fillStyle = "#2b2f33";
+    function chevron(x, y, dx, dy) {
+      const px = -dy;
+      const py = dx;
       ctx.beginPath();
-      ctx.ellipse(x, y, 16, 11, 0, 0, Math.PI * 2);
+      ctx.moveTo(x + dx * 2, y + dy * 2);
+      ctx.lineTo(x - dx * head + px * spread, y - dy * head + py * spread);
+      ctx.lineTo(x - dx * head - px * spread, y - dy * head - py * spread);
+      ctx.closePath();
       ctx.fill();
-      ctx.fillStyle = "#6d737a";
-      ctx.beginPath();
-      ctx.ellipse(x, y, 7, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-    });
+    }
 
-    ctx.fillStyle = "#e0a800";
-    roundRect(ctx, 18, 20, w - 48, h - 40, 16);
-    ctx.fill();
-    ctx.fillStyle = "#ffd54f";
-    roundRect(ctx, 22, 22, w - 56, h - 50, 14);
-    ctx.fill();
+    function paint(color, width) {
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      if (vertical) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - half + head);
+        ctx.lineTo(cx, cy + half - head);
+        ctx.stroke();
+        chevron(cx, cy - half, 0, -1);
+        chevron(cx, cy + half, 0, 1);
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(cx - half + head, cy);
+        ctx.lineTo(cx + half - head, cy);
+        ctx.stroke();
+        chevron(cx - half, cy, -1, 0);
+        chevron(cx + half, cy, 1, 0);
+      }
+    }
 
-    ctx.fillStyle = "#9e9e9e";
-    roundRect(ctx, w - 42, 32, 28, h - 64, 6);
-    ctx.fill();
-    ctx.fillStyle = "#cfd8dc";
-    roundRect(ctx, w - 38, 36, 20, h - 72, 4);
-    ctx.fill();
-
-    ctx.fillStyle = "#00695c";
-    roundRect(ctx, 36, 26, 58, h - 52, 12);
-    ctx.fill();
-    ctx.fillStyle = "#26a69a";
-    roundRect(ctx, 40, 28, 50, h - 62, 10);
-    ctx.fill();
-    ctx.fillStyle = "#b2ebf2";
-    roundRect(ctx, 48, 34, 34, 16, 6);
-    ctx.fill();
-
-    ctx.fillStyle = "#ef6c00";
-    ctx.beginPath();
-    ctx.arc(65, 28, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#ffcc80";
-    ctx.beginPath();
-    ctx.arc(63, 26, 3.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = "#5d4037";
-    ctx.beginPath();
-    ctx.arc(92, 48, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    return c;
+    paint("rgba(60, 30, 20, 0.28)", 14);
+    paint("#fff8e1", 8);
   }
 
-  function crate(cell, count) {
-    const w = cell;
-    const h = cell * count;
+  function block(cell, count, axis) {
+    const vertical = axis === "v";
+    const w = vertical ? cell : cell * count;
+    const h = vertical ? cell * count : cell;
     const { c, ctx } = canvas(w, h);
-    ctx.fillStyle = "rgba(40, 20, 20, 0.22)";
+    const palette = vertical
+      ? { shadow: "rgba(40, 20, 20, 0.22)", dark: "#c62828", mid: "#ef5350", shine: "#ff8a80" }
+      : { shadow: "rgba(60, 30, 10, 0.22)", dark: "#ef6c00", mid: "#ffa726", shine: "#ffcc80" };
+
+    ctx.fillStyle = palette.shadow;
     roundRect(ctx, 8, 10, w - 10, h - 12, 16);
     ctx.fill();
-    ctx.fillStyle = "#c62828";
+    ctx.fillStyle = palette.dark;
     roundRect(ctx, 6, 6, w - 14, h - 14, 18);
     ctx.fill();
-    ctx.fillStyle = "#ef5350";
+    ctx.fillStyle = palette.mid;
     roundRect(ctx, 10, 8, w - 22, h - 22, 16);
     ctx.fill();
-    ctx.fillStyle = "#ff8a80";
-    roundRect(ctx, 16, 12, w - 36, 10, 6);
-    ctx.fill();
-
-    const holeH = Math.min(28, (h - 40) / count - 6);
-    for (let i = 0; i < count; i++) {
-      const y = 28 + i * ((h - 48) / count);
-      ctx.fillStyle = "#c62828";
-      roundRect(ctx, 22, y, w - 50, holeH, 8);
-      ctx.fill();
-      ctx.fillStyle = "#b71c1c";
-      roundRect(ctx, 26, y + 4, w - 58, holeH - 8, 6);
-      ctx.fill();
+    ctx.fillStyle = palette.shine;
+    if (vertical) {
+      roundRect(ctx, 16, 12, w - 36, 10, 6);
+    } else {
+      roundRect(ctx, 18, 14, w - 38, 8, 5);
     }
-    return c;
-  }
-
-  function plank(cell, count) {
-    const w = cell * count;
-    const h = cell;
-    const { c, ctx } = canvas(w, h);
-    ctx.fillStyle = "rgba(60, 30, 10, 0.22)";
-    roundRect(ctx, 8, 12, w - 10, h - 16, 16);
-    ctx.fill();
-    ctx.fillStyle = "#ef6c00";
-    roundRect(ctx, 6, 8, w - 14, h - 18, 18);
-    ctx.fill();
-    ctx.fillStyle = "#ffa726";
-    roundRect(ctx, 10, 10, w - 22, h - 26, 16);
-    ctx.fill();
-    ctx.fillStyle = "#ffcc80";
-    roundRect(ctx, 18, 14, w - 38, 8, 5);
-    ctx.fill();
-    ctx.strokeStyle = "#f57c00";
-    ctx.lineWidth = 3;
-    ctx.lineCap = "round";
-    for (let i = 1; i < count; i++) {
-      const x = i * cell;
-      ctx.beginPath();
-      ctx.moveTo(x, 22);
-      ctx.lineTo(x, h - 22);
-      ctx.stroke();
-    }
-    return c;
-  }
-
-  function pipe(cell, count) {
-    const w = cell * count;
-    const h = cell;
-    const { c, ctx } = canvas(w, h);
-    ctx.fillStyle = "rgba(80, 20, 40, 0.2)";
-    roundRect(ctx, 8, 16, w - 10, h - 22, h / 2);
-    ctx.fill();
-    ctx.fillStyle = "#c2185b";
-    roundRect(ctx, 4, 14, w - 8, h - 28, h / 2);
-    ctx.fill();
-    ctx.fillStyle = "#ec407a";
-    roundRect(ctx, 8, 16, w - 16, h - 36, h / 2);
-    ctx.fill();
-    ctx.fillStyle = "#f8bbd0";
-    roundRect(ctx, 28, 20, w - 56, 10, 8);
     ctx.fill();
 
-    function cap(x) {
-      ctx.fillStyle = "#ad1457";
-      ctx.beginPath();
-      ctx.ellipse(x, h / 2, 16, 26, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#880e4f";
-      ctx.beginPath();
-      ctx.ellipse(x, h / 2, 9, 16, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#f8bbd0";
-      ctx.beginPath();
-      ctx.ellipse(x - 2, h / 2 - 4, 3, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    cap(22);
-    cap(w - 22);
+    const span = (vertical ? h : w) - 52;
+    doubleArrow(ctx, w / 2, h / 2, vertical, span);
     return c;
   }
 
@@ -411,12 +322,9 @@ const Draw = (() => {
   }
 
   function register(scene, cell) {
-    add(scene, "truck", truck(cell));
-    add(scene, "crate2", crate(cell, 2));
-    add(scene, "plank2", plank(cell, 2));
-    add(scene, "plank3", plank(cell, 3));
-    add(scene, "pipe2", pipe(cell, 2));
-    add(scene, "pipe3", pipe(cell, 3));
+    add(scene, "block-v2", block(cell, 2, "v"));
+    add(scene, "block-h2", block(cell, 2, "h"));
+    add(scene, "block-h3", block(cell, 3, "h"));
     add(scene, "tree", tree());
     add(scene, "bush", bush());
     add(scene, "flower", flower());

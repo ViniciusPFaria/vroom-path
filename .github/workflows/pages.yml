@@ -29,6 +29,7 @@ jobs:
           cp index.html .nojekyll site/
           cp -r js site/js
           cp -r assets site/assets
+          cp -r vendor site/vendor
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

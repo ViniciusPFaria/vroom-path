@@ -1,0 +1,10 @@
+{
+  "appId": "com.viniciuspfaria.vroompath",
+  "appName": "Vroom Path",
+  "webDir": "www",
+  "backgroundColor": "#6fcf4a",
+  "android": {
+    "webContentsDebuggingEnabled": false,
+    "backgroundColor": "#6fcf4a"
+  }
+}

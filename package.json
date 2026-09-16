@@ -1,0 +1,16 @@
+{
+  "name": "vroom-path",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Quebra-cabeça do Tito para tablet Android e navegador",
+  "scripts": {
+    "stage:www": "rm -rf www && mkdir -p www && cp index.html www/ && cp -r js assets vendor www/",
+    "sync:android": "npm run stage:www && npx cap sync android",
+    "build:apk": "npm run sync:android && cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  }
+}
